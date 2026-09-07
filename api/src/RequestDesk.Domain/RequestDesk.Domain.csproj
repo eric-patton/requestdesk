@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The domain layer has no package references on purpose. Entities, the status state machine and
+    the role rules are plain C# that can be read, tested and reasoned about without a framework.
+  -->
+
+</Project>

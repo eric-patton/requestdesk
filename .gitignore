@@ -1,0 +1,40 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+*.trx
+coverage/
+*.cobertura.xml
+
+# Node / Angular
+node_modules/
+web/dist/
+web/.angular/
+web/coverage/
+web/test-results/
+web/playwright-report/
+web/blob-report/
+web/playwright/.cache/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
+
+# Runtime data
+var/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# Local secrets. Never commit these.
+.env
+.env.*

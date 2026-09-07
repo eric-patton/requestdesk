@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RequestDesk.Domain\RequestDesk.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Handlers and validators are internal; only the unit tests get to see them. -->
+    <InternalsVisibleTo Include="RequestDesk.Application.Tests" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RequestDesk.Api/RequestDesk.Api.csproj" />
+    <Project Path="src/RequestDesk.Application/RequestDesk.Application.csproj" />
+    <Project Path="src/RequestDesk.Domain/RequestDesk.Domain.csproj" />
+    <Project Path="src/RequestDesk.Infrastructure/RequestDesk.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RequestDesk.Api.IntegrationTests/RequestDesk.Api.IntegrationTests.csproj" />
+    <Project Path="tests/RequestDesk.Application.Tests/RequestDesk.Application.Tests.csproj" />
+    <Project Path="tests/RequestDesk.Domain.Tests/RequestDesk.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
