@@ -5,8 +5,8 @@ ASP.NET Core 10 and PostgreSQL behind an Angular 22 front end, with a status sta
 append-only history, role-based access, file attachments, a SQL reporting query, server-side paging,
 and three tiers of tests, one of them against a real database.
 
-**Live demo:** not deployed yet. `docker compose up` gives you the whole thing locally in about a
-minute (below). Demo logins, shown as buttons on the sign-in screen:
+**Live demo: <https://requestdesk.eric-patton.dev>.** Sign in with one click as any of the three roles.
+The data is synthetic and resets every hour. Demo logins, also shown as buttons on the sign-in screen:
 
 | Role | Email | Password |
 |---|---|---|
@@ -39,7 +39,8 @@ docker compose up --build
 Then open <http://localhost:8085> and pick a role. That is PostgreSQL, the API (migrated and
 seeded with synthetic data) and the front end behind nginx, on one command. The API is also on
 <http://localhost:5028> directly, with an interactive API reference at `/scalar` and a health check
-at `/health` that really does check the database.
+at `/health` that really does check the database. The live demo exposes the same two:
+<https://requestdesk.eric-patton.dev/scalar> and <https://requestdesk.eric-patton.dev/health>.
 
 <details>
 <summary>Screenshots</summary>
@@ -140,6 +141,7 @@ end and has the data model.
 | API tests | xUnit, Testcontainers PostgreSQL, `WebApplicationFactory` | Real HTTP against a real database. [ADR 0003](docs/decisions/0003-testcontainers-over-in-memory.md). |
 | Front-end tests | Vitest unit tests, Playwright end to end | The Playwright run goes through the compose stack in CI. |
 | CI | GitHub Actions | Build with warnings as errors, migrations drift check, all tests, container builds, the e2e run, Terraform validate. |
+| Hosting | Docker on a Mac Mini behind a Cloudflare Tunnel | The compose stack, a production override that publishes only the front end on localhost, and an outbound-only tunnel. No open ports, no monthly bill. [docs/hosting-mac-mini.md](docs/hosting-mac-mini.md). |
 | IaC | Terraform for ECS Fargate, RDS and S3 | Committed and validated, deliberately not applied. [infra/terraform](infra/terraform/README.md). |
 
 ## If you are evaluating me and have ten minutes
