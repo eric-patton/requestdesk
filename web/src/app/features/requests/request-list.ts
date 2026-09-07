@@ -21,7 +21,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
@@ -32,6 +32,13 @@ import {
   RequestStatus,
 } from '../../core/models';
 import { describeError } from '../../core/problem-details';
+import { RequestListState } from '../../core/request-list-state.service';
+import {
+  DEFAULT_LIST_PARAMS,
+  fromQueryParams,
+  hasListParams,
+  toQueryParams,
+} from '../../core/request-list-url';
 import { PRIORITIES, STATUSES, STATUS_LABEL } from '../../core/status';
 import { EmptyState } from '../../shared/empty-state';
 import { PriorityBadge } from '../../shared/priority-badge';
@@ -39,20 +46,13 @@ import { RowNavigationDirective } from '../../shared/row-navigation.directive';
 import { StatusChip } from '../../shared/status-chip';
 import { TimeAgoPipe } from '../../shared/time-ago.pipe';
 
-const DEFAULT_PARAMS: RequestListParams = {
-  page: 1,
-  pageSize: 20,
-  status: [],
-  priority: [],
-  unassigned: false,
-  search: '',
-  sortBy: 'updatedAt',
-  sortDescending: true,
-};
-
 /**
  * The request list. Every filter, the search, the sort and the page are sent to the server; the
  * table only ever holds one page. Rows are focusable and the arrow keys move between them.
+ *
+ * The filter state lives in the query string, so the back button, a refresh and a pasted link all
+ * show the same list. Changes replace the current history entry rather than pushing a new one:
+ * otherwise the back button would undo one filter at a time instead of leaving the list.
  */
 @Component({
   selector: 'app-request-list',
@@ -84,6 +84,8 @@ const DEFAULT_PARAMS: RequestListParams = {
 export class RequestList implements OnInit {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly listState = inject(RequestListState);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly auth = inject(AuthService);
@@ -91,7 +93,7 @@ export class RequestList implements OnInit {
   protected readonly priorities = PRIORITIES;
   protected readonly statusLabel = STATUS_LABEL;
 
-  protected readonly params = signal<RequestListParams>({ ...DEFAULT_PARAMS });
+  protected readonly params = signal<RequestListParams>({ ...DEFAULT_LIST_PARAMS });
   protected readonly rows = signal<RequestListItem[]>([]);
   protected readonly total = signal(0);
   protected readonly loading = signal(false);
@@ -125,7 +127,29 @@ export class RequestList implements OnInit {
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((search) => this.update({ search, page: 1 }));
 
+    this.restore();
     this.load();
+  }
+
+  /**
+   * Works out what the list should be showing. The URL wins, because it is the thing a person
+   * can see and share. Failing that, the filters from earlier in this session, so following a
+   * plain link back to /requests does not silently drop the queue somebody just narrowed down.
+   */
+  private restore(): void {
+    const fromUrl = this.route.snapshot.queryParams;
+    const remembered = this.listState.lastQuery();
+
+    if (hasListParams(fromUrl)) {
+      this.params.set(fromQueryParams(fromUrl));
+    } else if (hasListParams(remembered)) {
+      this.params.set(fromQueryParams(remembered));
+      this.syncUrl();
+    }
+
+    // The search box is not driven by the signal, so it has to be told separately, and without
+    // firing valueChanges or it would immediately reload what was just restored.
+    this.search.setValue(this.params().search, { emitEvent: false });
   }
 
   protected onStatusFilter(event: MatChipListboxChange): void {
@@ -143,8 +167,8 @@ export class RequestList implements OnInit {
   protected onSort(sort: Sort): void {
     if (!sort.direction) {
       this.update({
-        sortBy: DEFAULT_PARAMS.sortBy,
-        sortDescending: DEFAULT_PARAMS.sortDescending,
+        sortBy: DEFAULT_LIST_PARAMS.sortBy,
+        sortDescending: DEFAULT_LIST_PARAMS.sortDescending,
         page: 1,
       });
       return;
@@ -159,7 +183,7 @@ export class RequestList implements OnInit {
   protected clearFilters(): void {
     this.search.setValue('', { emitEvent: false });
     this.update({
-      ...DEFAULT_PARAMS,
+      ...DEFAULT_LIST_PARAMS,
       sortBy: this.params().sortBy,
       sortDescending: this.params().sortDescending,
     });
@@ -175,7 +199,19 @@ export class RequestList implements OnInit {
 
   private update(patch: Partial<RequestListParams>): void {
     this.params.update((current) => ({ ...current, ...patch }));
+    this.syncUrl();
     this.load();
+  }
+
+  private syncUrl(): void {
+    const query = toQueryParams(this.params());
+    this.listState.remember(query);
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: query,
+      replaceUrl: true,
+    });
   }
 
   private load(): void {

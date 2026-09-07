@@ -1,5 +1,5 @@
 <div class="page narrow">
-  <a mat-button routerLink="/requests" class="back">
+  <a mat-button routerLink="/requests" [queryParams]="listState.lastQuery()" class="back">
     <mat-icon aria-hidden="true">arrow_back</mat-icon>
     All requests
   </a>
@@ -135,7 +135,9 @@
     </mat-form-field>
 
     <div class="actions">
-      <a mat-button routerLink="/requests" type="button">Cancel</a>
+      <a mat-button routerLink="/requests" [queryParams]="listState.lastQuery()" type="button"
+        >Cancel</a
+      >
       <button mat-flat-button type="submit" [disabled]="saving()">
         <mat-icon aria-hidden="true">send</mat-icon>
         Open request

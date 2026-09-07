@@ -12,6 +12,7 @@ import { AuthService } from '../../core/auth.service';
 import { LIMITS } from '../../core/limits';
 import { CustomerSummary, RequestPriority } from '../../core/models';
 import { describeError, fieldErrorsOf } from '../../core/problem-details';
+import { RequestListState } from '../../core/request-list-state.service';
 import { PRIORITIES } from '../../core/status';
 
 /**
@@ -35,6 +36,7 @@ import { PRIORITIES } from '../../core/status';
   styleUrl: './request-form.scss',
 })
 export class RequestForm {
+  protected readonly listState = inject(RequestListState);
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);

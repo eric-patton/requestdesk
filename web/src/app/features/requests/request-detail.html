@@ -1,5 +1,5 @@
 <div class="page">
-  <a mat-button routerLink="/requests" class="back">
+  <a mat-button routerLink="/requests" [queryParams]="listState.lastQuery()" class="back">
     <mat-icon aria-hidden="true">arrow_back</mat-icon>
     All requests
   </a>
@@ -10,7 +10,9 @@
 
   @if (error(); as message) {
     <app-empty-state icon="error" headline="Could not load this request" [detail]="message">
-      <a mat-stroked-button routerLink="/requests">Back to the list</a>
+      <a mat-stroked-button routerLink="/requests" [queryParams]="listState.lastQuery()"
+        >Back to the list</a
+      >
     </app-empty-state>
   }
 

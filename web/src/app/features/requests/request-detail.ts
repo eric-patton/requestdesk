@@ -32,6 +32,7 @@ import {
   UserSummary,
 } from '../../core/models';
 import { describeError, problemOf } from '../../core/problem-details';
+import { RequestListState } from '../../core/request-list-state.service';
 import {
   STATUS_CLASS,
   STATUS_LABEL,
@@ -80,6 +81,7 @@ type TimelineItem =
   styleUrl: './request-detail.scss',
 })
 export class RequestDetailPage {
+  protected readonly listState = inject(RequestListState);
   private readonly api = inject(ApiService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
