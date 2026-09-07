@@ -23,7 +23,9 @@ services:
         max-file: "3"
 
   web:
-    ports:
+    # !override replaces the base list instead of merging with it; two bindings on one host port
+    # is a start-up failure.
+    ports: !override
       - "127.0.0.1:8085:80"
     logging:
       driver: json-file
