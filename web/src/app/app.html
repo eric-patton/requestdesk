@@ -33,6 +33,17 @@
     </a>
 
     <button
+      mat-icon-button
+      class="theme-toggle"
+      type="button"
+      (click)="theme.cycle()"
+      [attr.aria-label]="theme.label()"
+      [matTooltip]="theme.label()"
+    >
+      <mat-icon aria-hidden="true">{{ theme.icon() }}</mat-icon>
+    </button>
+
+    <button
       mat-button
       class="user"
       [matMenuTriggerFor]="userMenu"

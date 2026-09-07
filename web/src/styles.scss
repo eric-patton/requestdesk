@@ -3,8 +3,10 @@
 // The shared design system is loaded ahead of this file by angular.json: tokens, then base, then
 // components. This file does three jobs and nothing else:
 //
-//   1. put Angular Material into the same dark palette, by overriding the --mat-sys-* variables
-//      the components read, so Material's own widgets inherit the system instead of fighting it
+//   1. put Angular Material onto the shared palette, by overriding the --mat-sys-* variables
+//      the components read, so Material's own widgets inherit the system instead of fighting it.
+//      Every value below is an --ep- token, and those are light-dark() pairs, so Material
+//      themes itself in both directions from this one mapping
 //   2. re-point the app's existing --status-* and --priority-* variables at the shared tokens,
 //      which reskins the chips and badges without touching a single component
 //   3. restyle the page scaffolding that is not a component
@@ -12,8 +14,9 @@
 // Nothing here redefines a colour. Every value is an --ep- token from tokens.css.
 
 html {
-  // mat.theme emits light-dark() pairs, so the scheme switch is what flips Material to dark.
-  color-scheme: dark;
+  // No color-scheme here on purpose. tokens.css declares `color-scheme: light dark` and flips it
+  // from the data-ep-theme attribute, and mat.theme emits light-dark() pairs of its own, so
+  // Angular Material follows the same switch as the rest of the system for free.
 
   @include mat.theme(
     (
@@ -74,14 +77,14 @@ html {
   --mat-sys-on-tertiary-container: var(--ep-ink-2);
 
   --mat-sys-error: var(--ep-critical);
-  --mat-sys-on-error: #2a0f0c;
+  --mat-sys-on-error: light-dark(#fffaf8, #2a0f0c);
   --mat-sys-error-container: var(--ep-critical-bg);
   --mat-sys-on-error-container: var(--ep-critical);
 
   --mat-sys-outline: var(--ep-line-strong);
   --mat-sys-outline-variant: var(--ep-line);
-  --mat-sys-shadow: #000;
-  --mat-sys-scrim: rgba(0, 0, 0, 0.72);
+  --mat-sys-shadow: light-dark(#5b6070, #000000);
+  --mat-sys-scrim: light-dark(rgba(20, 22, 28, 0.45), rgba(0, 0, 0, 0.72));
 
   --mat-sys-inverse-surface: var(--ep-ink);
   --mat-sys-inverse-on-surface: var(--ep-bg);
@@ -219,4 +222,10 @@ body {
 .mat-mdc-raised-button.mat-primary {
   background: linear-gradient(140deg, var(--ep-accent), var(--ep-accent-hot));
   color: var(--ep-on-accent);
+}
+
+// The theme control is a utility, not an action: it should read as part of the chrome rather
+// than competing with New request two elements away.
+.theme-toggle {
+  color: var(--ep-ink-2);
 }

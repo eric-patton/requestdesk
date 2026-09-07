@@ -2,7 +2,7 @@
  * VENDORED from the eric-patton.dev repository. Do not edit here.
  *
  * Source: https://github.com/eric-patton/eric-patton.dev  design-system/base.css
- * Re-sync with: cp ../../eric-patton.dev/design-system/*.css web/src/design-system/
+ * Re-sync with: cp ../eric-patton.dev/design-system/*.css requestdesk/web/src/design-system/
  *
  * The site and this application share one design system so the demo and the portfolio
  * page that links to it read as a single product.
@@ -185,7 +185,12 @@ pre {
 /* The one place the accent and the cool counterweight meet. Used on the last clause of a
    headline, never on a whole one: a fully gradient headline is unreadable and looks cheap. */
 .ep-gradient {
-  background: linear-gradient(100deg, var(--ep-accent) 8%, #ffd9a8 50%, var(--ep-ice) 96%);
+  background: linear-gradient(
+    100deg,
+    var(--ep-accent) 8%,
+    light-dark(#e8863a, #ffd9a8) 50%,
+    var(--ep-ice) 96%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

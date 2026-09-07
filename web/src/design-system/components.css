@@ -2,7 +2,7 @@
  * VENDORED from the eric-patton.dev repository. Do not edit here.
  *
  * Source: https://github.com/eric-patton/eric-patton.dev  design-system/components.css
- * Re-sync with: cp ../../eric-patton.dev/design-system/*.css web/src/design-system/
+ * Re-sync with: cp ../eric-patton.dev/design-system/*.css requestdesk/web/src/design-system/
  *
  * The site and this application share one design system so the demo and the portfolio
  * page that links to it read as a single product.
@@ -59,7 +59,7 @@
 
 .ep-btn--primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 34px -12px rgba(255, 138, 61, 1);
+  box-shadow: 0 14px 34px -12px var(--ep-accent-hot);
   color: var(--ep-on-accent);
 }
 
@@ -70,7 +70,7 @@
 .ep-btn--ghost:hover {
   transform: translateY(-2px);
   border-color: var(--ep-ink-3);
-  background: rgba(255, 255, 255, 0.03);
+  background: color-mix(in srgb, var(--ep-ink) 4%, transparent);
   color: var(--ep-ink);
 }
 
@@ -86,7 +86,7 @@
 
 .ep-btn--danger {
   background: var(--ep-critical);
-  color: #2a0f0c;
+  color: light-dark(#fffaf8, #2a0f0c);
 }
 
 .ep-btn--sm {
@@ -108,7 +108,7 @@
   padding: 0.4rem 0.9rem 0.4rem 0.625rem;
   border: 1px solid var(--ep-line-strong);
   border-radius: var(--ep-radius-pill);
-  background: rgba(21, 24, 36, 0.72);
+  background: color-mix(in srgb, var(--ep-surface) 78%, transparent);
   color: var(--ep-ink-2);
   font-size: var(--ep-text-small);
   text-decoration: none;
@@ -132,7 +132,7 @@
   flex: none;
   border-radius: 50%;
   background: var(--ep-lime);
-  box-shadow: 0 0 0 4px rgba(166, 227, 77, 0.16);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ep-lime) 18%, transparent);
   animation: ep-pulse 2.6s var(--ep-ease) infinite;
 }
 
@@ -221,7 +221,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 45%, rgba(16, 18, 25, 0.88) 100%);
+  background: linear-gradient(
+    to bottom,
+    transparent 45%,
+    color-mix(in srgb, var(--ep-bg-raised) 90%, transparent) 100%
+  );
 }
 
 .ep-card__art-label {
@@ -300,7 +304,7 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #3a4055;
+  background: var(--ep-line-strong);
 }
 
 .ep-frame__url {
@@ -577,4 +581,46 @@
   font-family: var(--ep-font-display);
   font-size: var(--ep-text-heading);
   color: var(--ep-ink-2);
+}
+
+/* ---- Theme toggle ------------------------------------------------------------------------- */
+/*
+ * Cycles system -> light -> dark -> system. Which icon shows is decided by CSS from the
+ * data-ep-theme attribute on <html>, not by JavaScript swapping DOM, so the button is already
+ * correct on first paint and cannot disagree with the theme it is reporting.
+ */
+
+.ep-theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--ep-line-strong);
+  border-radius: var(--ep-radius-pill);
+  background: transparent;
+  color: var(--ep-ink-2);
+  transition:
+    border-color var(--ep-duration) var(--ep-ease),
+    color var(--ep-duration) var(--ep-ease),
+    background-color var(--ep-duration) var(--ep-ease);
+}
+
+.ep-theme-toggle:hover {
+  border-color: var(--ep-accent);
+  color: var(--ep-accent);
+  background: var(--ep-accent-soft);
+}
+
+.ep-theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  display: none;
+}
+
+/* No attribute means "follow the system", which is the default state. */
+:root:not([data-ep-theme]) .ep-theme-toggle [data-ep-icon="system"],
+:root[data-ep-theme="light"] .ep-theme-toggle [data-ep-icon="light"],
+:root[data-ep-theme="dark"] .ep-theme-toggle [data-ep-icon="dark"] {
+  display: block;
 }

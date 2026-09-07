@@ -2,7 +2,7 @@
  * VENDORED from the eric-patton.dev repository. Do not edit here.
  *
  * Source: https://github.com/eric-patton/eric-patton.dev  design-system/tokens.css
- * Re-sync with: cp ../../eric-patton.dev/design-system/*.css web/src/design-system/
+ * Re-sync with: cp ../eric-patton.dev/design-system/*.css requestdesk/web/src/design-system/
  *
  * The site and this application share one design system so the demo and the portfolio
  * page that links to it read as a single product.
@@ -15,18 +15,31 @@
  * prefixed --ep- so it can drop into an application that already carries its own variables
  * (RequestDesk has Angular Material's) without colliding.
  *
- * The system is dark only, on purpose. A half-built light theme is worse than no light theme,
- * and committing to one ground lets the accent, the shadows and the generated cover art all be
- * tuned for the same background instead of compromising across two.
+ * ---- How theming works here -------------------------------------------------------------
  *
- * Three type voices, each with a job:
+ * Every colour is declared once, as a light-dark() pair. The browser resolves which half to use
+ * from the element's `color-scheme`, so switching the entire product between themes is one
+ * property on <html>:
+ *
+ *   <html>                          follows the operating system
+ *   <html data-ep-theme="light">    forced light
+ *   <html data-ep-theme="dark">     forced dark
+ *
+ * No duplicated palette blocks, no class toggling on every component, and no JavaScript needed
+ * for the default case. light-dark() only accepts colours, so the handful of non-colour tokens
+ * that differ by theme (shadow strength, artwork opacity) are set in the small blocks at the
+ * bottom, and composite values like box-shadow are built from a colour token instead.
+ *
+ * ---- The three type voices ----------------------------------------------------------------
  *   display  Bricolage Grotesque, headlines only, where the personality lives
  *   sans     Inter, every piece of working UI, legible at 13px in a dense table row
  *   mono     JetBrains Mono, technical detail: counts, stack names, labels, status codes
  */
 
 :root {
-  color-scheme: dark;
+  /* Both schemes are supported, so light-dark() has something to resolve against and the
+     browser paints native controls and scrollbars to match. */
+  color-scheme: light dark;
 
   /* ---- Type families ------------------------------------------------------------------- */
   --ep-font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
@@ -61,68 +74,70 @@
   --ep-weight-black: 800;
 
   /* ---- Colour: ground and surfaces ------------------------------------------------------ */
-  /* Near-black with a slight blue cast rather than pure #000, so shadows still have somewhere
-     to go and the generated cover art does not float on a void. */
-  --ep-bg: #0a0b0f;
-  --ep-bg-raised: #101219;
-  --ep-surface: #151824;
-  --ep-surface-2: #1c2030;
+  /* Dark is near-black with a slight blue cast rather than pure #000, so shadows still have
+     somewhere to go. Light is a cool off-white ground with white surfaces above it, so the same
+     "raised" gradients that give cards depth in the dark theme still read in the light one. */
+  --ep-bg: light-dark(#f4f5f8, #0a0b0f);
+  --ep-bg-raised: light-dark(#fafbfc, #101219);
+  --ep-surface: light-dark(#ffffff, #151824);
+  --ep-surface-2: light-dark(#eef0f4, #1c2030);
 
-  --ep-line: #262b3b;
-  --ep-line-strong: #343a4e;
+  --ep-line: light-dark(#e2e5ea, #262b3b);
+  --ep-line-strong: light-dark(#c9cfd9, #343a4e);
 
   /* ---- Colour: text --------------------------------------------------------------------- */
-  --ep-ink: #f2f3f7;
-  --ep-ink-2: #a3a9bd;
-  --ep-ink-3: #6f7689;
+  --ep-ink: light-dark(#14161c, #f2f3f7);
+  --ep-ink-2: light-dark(#545b6b, #a3a9bd);
+  --ep-ink-3: light-dark(#79808f, #6f7689);
 
   /* ---- Colour: accent ------------------------------------------------------------------- */
-  /* Amber rather than the default SaaS blue. It is warm against a cold ground, it survives at
-     small sizes, and it is the colour the cover art is lit with, so the page and the pictures
-     agree. --ep-on-accent is near-black because amber is far too light to carry white text. */
-  --ep-accent: #ffa94d;
-  --ep-accent-hot: #ff8a3d;
-  --ep-accent-deep: #c2410c;
-  --ep-accent-soft: rgba(255, 169, 77, 0.12);
-  --ep-on-accent: #2a1405;
+  /* Amber rather than the default SaaS blue: warm against a cold ground, and the colour the
+     cover art is lit with, so the page and the pictures agree.
+     The light half is a much deeper amber. The dark theme's #ffa94d is nearly invisible on
+     white, and an accent that fails as a link colour is not an accent, it is a decoration. */
+  --ep-accent: light-dark(#b45309, #ffa94d);
+  --ep-accent-hot: light-dark(#c2410c, #ff8a3d);
+  --ep-accent-deep: light-dark(#7c2d12, #c2410c);
+  --ep-accent-soft: light-dark(rgba(180, 83, 9, 0.1), rgba(255, 169, 77, 0.12));
+  --ep-on-accent: light-dark(#fffaf5, #2a1405);
 
   /* The two supporting hues. Ice is the cool counterweight in the headline gradient and on
      informational chips; lime means live, healthy, passing. */
-  --ep-ice: #8fb8ff;
-  --ep-lime: #a6e34d;
+  --ep-ice: light-dark(#2563eb, #8fb8ff);
+  --ep-lime: light-dark(#3f7d20, #a6e34d);
 
   /* ---- Colour: feedback ----------------------------------------------------------------- */
-  --ep-positive: #a6e34d;
-  --ep-positive-bg: #1a2410;
-  --ep-caution: #ffa94d;
-  --ep-caution-bg: #2c1e10;
-  --ep-critical: #ff7a6b;
-  --ep-critical-bg: #2c1717;
+  --ep-positive: light-dark(#2f6b34, #a6e34d);
+  --ep-positive-bg: light-dark(#e8f1e6, #1a2410);
+  --ep-caution: light-dark(#8a6410, #ffa94d);
+  --ep-caution-bg: light-dark(#f8f0da, #2c1e10);
+  --ep-critical: light-dark(#b3261e, #ff7a6b);
+  --ep-critical-bg: light-dark(#fbeae8, #2c1717);
 
   /* ---- Colour: RequestDesk status palette ----------------------------------------------- */
-  /* Seven states that have to stay readable at 11px inside a dense table row. Each is a light
-     ink on a dark tint rather than a saturated fill, which holds up at small sizes and stops
-     the table turning into a bag of sweets. */
-  --ep-status-new-ink: #8fb8ff;
-  --ep-status-new-bg: #16203a;
-  --ep-status-triaged-ink: #bcaaf7;
-  --ep-status-triaged-bg: #221d3a;
-  --ep-status-inprogress-ink: #6fd3bb;
-  --ep-status-inprogress-bg: #10282a;
-  --ep-status-blocked-ink: #ffa94d;
-  --ep-status-blocked-bg: #2c1e10;
-  --ep-status-resolved-ink: #a6e34d;
-  --ep-status-resolved-bg: #1a2410;
-  --ep-status-closed-ink: #a3a9bd;
-  --ep-status-closed-bg: #1c2030;
-  --ep-status-cancelled-ink: #6f7689;
-  --ep-status-cancelled-bg: #171a24;
+  /* Seven states that have to stay readable at 11px inside a dense table row, in either theme.
+     Both halves are a saturated ink on a tinted ground rather than white on a solid fill, which
+     holds up at small sizes and stops the table turning into a bag of sweets. */
+  --ep-status-new-ink: light-dark(#1c3a5b, #8fb8ff);
+  --ep-status-new-bg: light-dark(#e7eef6, #16203a);
+  --ep-status-triaged-ink: light-dark(#4c3f86, #bcaaf7);
+  --ep-status-triaged-bg: light-dark(#ece9f7, #221d3a);
+  --ep-status-inprogress-ink: light-dark(#0f6152, #6fd3bb);
+  --ep-status-inprogress-bg: light-dark(#e2f0ec, #10282a);
+  --ep-status-blocked-ink: light-dark(#a4552b, #ffa94d);
+  --ep-status-blocked-bg: light-dark(#f7ece4, #2c1e10);
+  --ep-status-resolved-ink: light-dark(#2f6b34, #a6e34d);
+  --ep-status-resolved-bg: light-dark(#e8f1e6, #1a2410);
+  --ep-status-closed-ink: light-dark(#5f594f, #a3a9bd);
+  --ep-status-closed-bg: light-dark(#eeeef1, #1c2030);
+  --ep-status-cancelled-ink: light-dark(#8b8478, #6f7689);
+  --ep-status-cancelled-bg: light-dark(#f3f3f5, #171a24);
 
   /* ---- Colour: RequestDesk priority ------------------------------------------------------ */
-  --ep-priority-low: #6f7689;
-  --ep-priority-normal: #a3a9bd;
-  --ep-priority-high: #ffa94d;
-  --ep-priority-urgent: #ff7a6b;
+  --ep-priority-low: light-dark(#79808f, #6f7689);
+  --ep-priority-normal: light-dark(#545b6b, #a3a9bd);
+  --ep-priority-high: light-dark(#b45309, #ffa94d);
+  --ep-priority-urgent: light-dark(#b3261e, #ff7a6b);
 
   /* ---- Space ---------------------------------------------------------------------------- */
   --ep-space-3xs: 0.25rem;
@@ -150,13 +165,18 @@
   --ep-radius-pill: 999px;
 
   /* ---- Elevation -------------------------------------------------------------------------- */
-  /* On a dark ground a shadow cannot be "darker than the page", so depth comes from a real
-     black shadow plus a one-pixel lighter border. Both are needed; either alone reads flat. */
-  --ep-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --ep-shadow-md: 0 18px 40px -20px rgba(0, 0, 0, 0.9);
-  --ep-shadow-lg: 0 30px 60px -30px rgba(0, 0, 0, 0.95);
-  --ep-shadow-xl: 0 40px 80px -32px rgba(0, 0, 0, 0.92), 0 0 0 1px rgba(255, 255, 255, 0.03);
-  --ep-glow-accent: 0 8px 26px -10px rgba(255, 138, 61, 0.9);
+  /* box-shadow is a composite value, so it cannot go through light-dark() directly. The colour
+     inside it can, which is the whole trick: one token flips and every shadow follows. A dark
+     theme needs a much heavier shadow than a light one to read as depth at all. */
+  --ep-shadow-color: light-dark(rgba(20, 22, 28, 0.1), rgba(0, 0, 0, 0.55));
+  --ep-shadow-color-strong: light-dark(rgba(20, 22, 28, 0.16), rgba(0, 0, 0, 0.95));
+
+  --ep-shadow-sm: 0 1px 2px var(--ep-shadow-color);
+  --ep-shadow-md: 0 18px 40px -20px var(--ep-shadow-color-strong);
+  --ep-shadow-lg: 0 30px 60px -30px var(--ep-shadow-color-strong);
+  --ep-shadow-xl:
+    0 40px 80px -32px var(--ep-shadow-color-strong), 0 0 0 1px var(--ep-shadow-color);
+  --ep-glow-accent: 0 8px 26px -10px light-dark(rgba(180, 83, 9, 0.5), rgba(255, 138, 61, 0.9));
   --ep-focus-ring: 0 0 0 2px var(--ep-bg), 0 0 0 4px var(--ep-accent);
 
   /* ---- Motion ----------------------------------------------------------------------------- */
@@ -165,4 +185,33 @@
   --ep-duration-fast: 150ms;
   --ep-duration: 300ms;
   --ep-duration-slow: 700ms;
+
+  /* ---- Theme-dependent values that are not colours ------------------------------------------ */
+  /* The hero and card artwork are dark photographs. Behind dark text on a pale ground they have
+     to drop to a ghost of themselves or they fight the words; on the dark ground they can carry
+     the page. Defaults here are the light values, overridden for dark below. */
+  --ep-art-opacity: 0.14;
+  --ep-art-blend: multiply;
+}
+
+/* Dark, chosen by the operating system, unless the page has been forced light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-ep-theme="light"]) {
+    --ep-art-opacity: 0.5;
+    --ep-art-blend: normal;
+  }
+}
+
+/* An explicit choice always wins, in both directions. Setting color-scheme is what re-resolves
+   every light-dark() token on the page, so these two rules are the entire theme switch. */
+:root[data-ep-theme="light"] {
+  color-scheme: light;
+  --ep-art-opacity: 0.14;
+  --ep-art-blend: multiply;
+}
+
+:root[data-ep-theme="dark"] {
+  color-scheme: dark;
+  --ep-art-opacity: 0.5;
+  --ep-art-blend: normal;
 }

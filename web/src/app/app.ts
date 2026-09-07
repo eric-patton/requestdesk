@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/auth.service';
 import { DemoService } from './core/demo.service';
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +30,7 @@ import { DemoService } from './core/demo.service';
 export class App {
   protected readonly auth = inject(AuthService);
   protected readonly demo = inject(DemoService);
+  protected readonly theme = inject(ThemeService);
 
   constructor() {
     this.demo.load();

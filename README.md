@@ -22,7 +22,7 @@ real browser, and the same file regenerates every screenshot in this README, so 
 quietly stop matching the software.
 
 [![CI](https://github.com/eric-patton/requestdesk/actions/workflows/ci.yml/badge.svg)](https://github.com/eric-patton/requestdesk/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-313%20passing-2ea44f)
+![Tests](https://img.shields.io/badge/tests-318%20passing-2ea44f)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512bd4)
 ![Angular 22](https://img.shields.io/badge/Angular-22-dd0031)
 ![PostgreSQL 17](https://img.shields.io/badge/PostgreSQL-17-336791)
@@ -222,10 +222,10 @@ of the work.
 | Domain | 160 | The 49-pair transition matrix, every status crossed with every role, the aggregate's invariants. Milliseconds, no I/O. |
 | Application | 35 | Handlers with test doubles, validators field by field, the validation pipeline. |
 | API integration | 93 | Real HTTP against a real PostgreSQL in Docker: the matrix again, append-only enforcement at both layers, auth and refresh rotation, paging, filtering, uploads, the report adding up. |
-| Web unit | 22 | Error mapping, relative time, status verbs, the shell. |
+| Web unit | 27 | Error mapping, relative time, status verbs, the shell, theme switching. |
 | End to end | 3 | A browser signing in, opening a request, triaging it, commenting; the customer and admin views. |
 
-313 in total, all green in CI on every push.
+318 in total, all green in CI on every push.
 
 ## License
 
