@@ -29,7 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
       font-size: 40px;
       width: 40px;
       height: 40px;
-      color: var(--mat-sys-outline);
+      color: var(--ep-ink-3);
     }
     .headline {
       font: var(--mat-sys-title-medium);

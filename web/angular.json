@@ -30,6 +30,9 @@
               }
             ],
             "styles": [
+              "src/design-system/tokens.css",
+              "src/design-system/base.css",
+              "src/design-system/components.css",
               "src/styles.scss"
             ]
           },

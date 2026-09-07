@@ -1,41 +1,115 @@
 @use '@angular/material' as mat;
 
+// The shared design system is loaded ahead of this file by angular.json: tokens, then base, then
+// components. This file does three jobs and nothing else:
+//
+//   1. put Angular Material into the same dark palette, by overriding the --mat-sys-* variables
+//      the components read, so Material's own widgets inherit the system instead of fighting it
+//   2. re-point the app's existing --status-* and --priority-* variables at the shared tokens,
+//      which reskins the chips and badges without touching a single component
+//   3. restyle the page scaffolding that is not a component
+//
+// Nothing here redefines a colour. Every value is an --ep- token from tokens.css.
+
 html {
-  color-scheme: light;
+  // mat.theme emits light-dark() pairs, so the scheme switch is what flips Material to dark.
+  color-scheme: dark;
 
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$orange-palette,
+        primary: mat.$orange-palette,
+        tertiary: mat.$blue-palette,
       ),
-      typography: Roboto,
+      typography: (
+        plain-family: (
+          Inter,
+          system-ui,
+          sans-serif,
+        ),
+        brand-family: (
+          'Bricolage Grotesque',
+          system-ui,
+          sans-serif,
+        ),
+      ),
       density: 0,
     )
   );
 
-  // Request status colours. One source for the chips, the table and the dashboard bars.
-  --status-new-dot: #2563eb;
-  --status-new-bg: #dbeafe;
-  --status-new-fg: #1e3a8a;
-  --status-triaged-dot: #7c3aed;
-  --status-triaged-bg: #ede9fe;
-  --status-triaged-fg: #4c1d95;
-  --status-in-progress-dot: #d97706;
-  --status-in-progress-bg: #fef3c7;
-  --status-in-progress-fg: #78350f;
-  --status-blocked-dot: #dc2626;
-  --status-blocked-bg: #fee2e2;
-  --status-blocked-fg: #7f1d1d;
-  --status-resolved-dot: #059669;
-  --status-resolved-bg: #d1fae5;
-  --status-resolved-fg: #064e3b;
-  --status-closed-dot: #64748b;
-  --status-closed-bg: #e2e8f0;
-  --status-closed-fg: #1e293b;
-  --status-cancelled-dot: #9ca3af;
-  --status-cancelled-bg: #f3f4f6;
-  --status-cancelled-fg: #4b5563;
+  // ---- Material system colours, retargeted onto the shared tokens ------------------------
+  // Material's generated dark palette is close but not ours, and "close" reads as two products
+  // rather than one. These are the tokens the components actually consume.
+  --mat-sys-background: var(--ep-bg);
+  --mat-sys-on-background: var(--ep-ink);
+  --mat-sys-surface: var(--ep-bg);
+  --mat-sys-on-surface: var(--ep-ink);
+  --mat-sys-surface-dim: var(--ep-bg);
+  --mat-sys-surface-bright: var(--ep-surface-2);
+  --mat-sys-surface-container-lowest: var(--ep-bg-raised);
+  --mat-sys-surface-container-low: var(--ep-surface);
+  --mat-sys-surface-container: var(--ep-surface);
+  --mat-sys-surface-container-high: var(--ep-surface-2);
+  --mat-sys-surface-container-highest: var(--ep-surface-2);
+  --mat-sys-surface-variant: var(--ep-surface-2);
+  --mat-sys-on-surface-variant: var(--ep-ink-2);
+
+  --mat-sys-primary: var(--ep-accent);
+  --mat-sys-on-primary: var(--ep-on-accent);
+  --mat-sys-primary-container: var(--ep-accent-soft);
+  --mat-sys-on-primary-container: var(--ep-accent);
+  --mat-sys-inverse-primary: var(--ep-accent-hot);
+
+  // Selection state (the active nav item, a chosen filter chip) is amber rather than blue.
+  // Blue already means the New status in the table two inches away, and a filter chip that
+  // borrows a status colour reads as a status.
+  --mat-sys-secondary: var(--ep-accent);
+  --mat-sys-on-secondary: var(--ep-on-accent);
+  --mat-sys-secondary-container: var(--ep-accent-soft);
+  --mat-sys-on-secondary-container: var(--ep-accent);
+
+  --mat-sys-tertiary: var(--ep-ice);
+  --mat-sys-on-tertiary: var(--ep-bg);
+  --mat-sys-tertiary-container: var(--ep-surface-2);
+  --mat-sys-on-tertiary-container: var(--ep-ink-2);
+
+  --mat-sys-error: var(--ep-critical);
+  --mat-sys-on-error: #2a0f0c;
+  --mat-sys-error-container: var(--ep-critical-bg);
+  --mat-sys-on-error-container: var(--ep-critical);
+
+  --mat-sys-outline: var(--ep-line-strong);
+  --mat-sys-outline-variant: var(--ep-line);
+  --mat-sys-shadow: #000;
+  --mat-sys-scrim: rgba(0, 0, 0, 0.72);
+
+  --mat-sys-inverse-surface: var(--ep-ink);
+  --mat-sys-inverse-on-surface: var(--ep-bg);
+
+  // ---- Status colours ----------------------------------------------------------------------
+  // The chip component reads --status-dot/-bg/-fg. The map below is the only thing that had to
+  // change to reskin every status chip, table row and dashboard bar in the application.
+  --status-new-dot: var(--ep-status-new-ink);
+  --status-new-bg: var(--ep-status-new-bg);
+  --status-new-fg: var(--ep-status-new-ink);
+  --status-triaged-dot: var(--ep-status-triaged-ink);
+  --status-triaged-bg: var(--ep-status-triaged-bg);
+  --status-triaged-fg: var(--ep-status-triaged-ink);
+  --status-in-progress-dot: var(--ep-status-inprogress-ink);
+  --status-in-progress-bg: var(--ep-status-inprogress-bg);
+  --status-in-progress-fg: var(--ep-status-inprogress-ink);
+  --status-blocked-dot: var(--ep-status-blocked-ink);
+  --status-blocked-bg: var(--ep-status-blocked-bg);
+  --status-blocked-fg: var(--ep-status-blocked-ink);
+  --status-resolved-dot: var(--ep-status-resolved-ink);
+  --status-resolved-bg: var(--ep-status-resolved-bg);
+  --status-resolved-fg: var(--ep-status-resolved-ink);
+  --status-closed-dot: var(--ep-status-closed-ink);
+  --status-closed-bg: var(--ep-status-closed-bg);
+  --status-closed-fg: var(--ep-status-closed-ink);
+  --status-cancelled-dot: var(--ep-status-cancelled-ink);
+  --status-cancelled-bg: var(--ep-status-cancelled-bg);
+  --status-cancelled-fg: var(--ep-status-cancelled-ink);
 }
 
 html,
@@ -45,14 +119,11 @@ body {
 }
 
 body {
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-  -webkit-font-smoothing: antialiased;
-}
-
-a {
-  color: var(--mat-sys-primary);
+  background: var(--ep-bg);
+  color: var(--ep-ink);
+  font-family: var(--ep-font-sans);
+  font-size: var(--ep-text-small);
+  line-height: var(--ep-leading-normal);
 }
 
 // Status chip palette: each status maps the generic variables the chip reads to its own colours.
@@ -61,58 +132,63 @@ a {
     --status-dot: var(--status-#{$s}-dot);
     --status-bg: var(--status-#{$s}-bg);
     --status-fg: var(--status-#{$s}-fg);
-    --status-border: color-mix(in srgb, var(--status-#{$s}-dot) 30%, transparent);
+    --status-border: color-mix(in srgb, var(--status-#{$s}-dot) 26%, transparent);
   }
 }
 
 .priority-low {
-  --priority-bg: #f1f5f9;
-  --priority-fg: #475569;
+  --priority-bg: var(--ep-surface-2);
+  --priority-fg: var(--ep-priority-low);
 }
 .priority-normal {
-  --priority-bg: #e0f2fe;
-  --priority-fg: #075985;
+  --priority-bg: var(--ep-surface-2);
+  --priority-fg: var(--ep-priority-normal);
 }
 .priority-high {
-  --priority-bg: #ffedd5;
-  --priority-fg: #9a3412;
+  --priority-bg: var(--ep-status-blocked-bg);
+  --priority-fg: var(--ep-priority-high);
 }
 .priority-urgent {
-  --priority-bg: #fee2e2;
-  --priority-fg: #991b1b;
+  --priority-bg: var(--ep-critical-bg);
+  --priority-fg: var(--ep-priority-urgent);
 }
 
 // Page scaffolding shared by every screen.
 .page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 16px 48px;
+  padding: var(--ep-space-lg) var(--ep-space-sm) var(--ep-space-2xl);
 }
 
 .page-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--ep-space-sm);
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: var(--ep-space-md);
 
   h1 {
     margin: 0;
-    font: var(--mat-sys-headline-medium);
-    letter-spacing: -0.01em;
+    font-family: var(--ep-font-display);
+    font-size: 1.75rem;
+    font-weight: var(--ep-weight-bold);
+    letter-spacing: var(--ep-tracking-display);
   }
 
   .subtitle {
-    margin: 4px 0 0;
-    color: var(--mat-sys-on-surface-variant);
+    margin: var(--ep-space-3xs) 0 0;
+    color: var(--ep-ink-2);
+    font-size: var(--ep-text-small);
   }
 }
 
+// The generic surface every screen builds on. Matches .ep-panel from the shared components, but
+// keeps its own name because the templates already use it.
 .card {
-  background: var(--mat-sys-surface-container-lowest);
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 12px;
+  background: linear-gradient(170deg, var(--ep-surface), var(--ep-bg-raised));
+  border: 1px solid var(--ep-line);
+  border-radius: var(--ep-radius-md);
 }
 
 .visually-hidden {
@@ -124,9 +200,8 @@ a {
   white-space: nowrap;
 }
 
-// Focus is visible everywhere. The table rows rely on it.
 :focus-visible {
-  outline: 2px solid var(--mat-sys-primary);
+  outline: 2px solid var(--ep-accent);
   outline-offset: 2px;
 }
 
@@ -136,4 +211,12 @@ a {
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
+}
+
+// Material's filled buttons are the one place the amber gradient from the site belongs, because
+// they are the same "primary action" the site's buttons are.
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-raised-button.mat-primary {
+  background: linear-gradient(140deg, var(--ep-accent), var(--ep-accent-hot));
+  color: var(--ep-on-accent);
 }

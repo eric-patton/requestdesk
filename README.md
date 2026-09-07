@@ -138,6 +138,7 @@ end and has the data model.
 | Auth | ASP.NET Core Identity credentials, JWT bearer, three roles | Fifteen-minute access tokens, rotating refresh tokens stored hashed, replay revokes the session, sign-in rate limited. |
 | Storage | Local disk behind an `IFileStorage` interface | Random keys, outside the web root, streamed back through the API. Shaped for an S3 swap. |
 | Front end | Angular 22, standalone components, signals, Angular Material | Reactive forms whose validation mirrors the server, a keyboard-navigable table, an accessible error summary. |
+| Design | A shared design system, vendored in `web/src/design-system/` | The same tokens and components as [eric-patton.dev](https://eric-patton.dev), so the demo and the page that links to it are visibly one product. |
 | API tests | xUnit, Testcontainers PostgreSQL, `WebApplicationFactory` | Real HTTP against a real database. [ADR 0003](docs/decisions/0003-testcontainers-over-in-memory.md). |
 | Front-end tests | Vitest unit tests, Playwright end to end | The Playwright run goes through the compose stack in CI. |
 | CI | GitHub Actions | Build with warnings as errors, migrations drift check, all tests, container builds, the e2e run, Terraform validate. |
@@ -210,8 +211,9 @@ the API sends nothing outbound. Nothing here is real, and nothing here can send 
 
 No notifications or email. No SLA engine. No multi-tenancy beyond the customer scope. No search
 server. No soft delete, because nothing is deleted. No S3 implementation of `IFileStorage`, only the
-interface shaped for one and the Terraform bucket it would target. No dark theme. Naming the edge of
-the scope is part of the work.
+interface shaped for one and the Terraform bucket it would target. No light theme: the design
+system commits to one ground rather than half-building two. Naming the edge of the scope is part
+of the work.
 
 ## Tests
 

@@ -1,0 +1,580 @@
+/*
+ * VENDORED from the eric-patton.dev repository. Do not edit here.
+ *
+ * Source: https://github.com/eric-patton/eric-patton.dev  design-system/components.css
+ * Re-sync with: cp ../../eric-patton.dev/design-system/*.css web/src/design-system/
+ *
+ * The site and this application share one design system so the demo and the portfolio
+ * page that links to it read as a single product.
+ */
+
+/*
+ * The component layer: the pieces shared between eric-patton.dev and RequestDesk.
+ *
+ * Every component is a plain class on a plain element, no framework, so the same CSS drops into
+ * an Angular template unchanged.
+ *
+ * Naming is .ep-<component>, modifiers .ep-<component>--<variant>, internals
+ * .ep-<component>__<part>. Boring on purpose: a design system whose class names nobody can
+ * guess gets abandoned.
+ */
+
+/* ---- Button ------------------------------------------------------------------------------- */
+
+.ep-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ep-space-2xs);
+  padding: 0.625rem 1.125rem;
+  border: 1px solid transparent;
+  border-radius: var(--ep-radius-pill);
+  background: transparent;
+  color: var(--ep-ink);
+  font-size: var(--ep-text-small);
+  font-weight: var(--ep-weight-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform var(--ep-duration-fast) var(--ep-ease),
+    box-shadow var(--ep-duration) var(--ep-ease),
+    background-color var(--ep-duration) var(--ep-ease),
+    border-color var(--ep-duration) var(--ep-ease),
+    color var(--ep-duration) var(--ep-ease);
+}
+
+.ep-btn[disabled],
+.ep-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.ep-btn--primary {
+  background: linear-gradient(140deg, var(--ep-accent), var(--ep-accent-hot));
+  color: var(--ep-on-accent);
+  box-shadow: var(--ep-glow-accent);
+}
+
+.ep-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px -12px rgba(255, 138, 61, 1);
+  color: var(--ep-on-accent);
+}
+
+.ep-btn--ghost {
+  border-color: var(--ep-line-strong);
+}
+
+.ep-btn--ghost:hover {
+  transform: translateY(-2px);
+  border-color: var(--ep-ink-3);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ep-ink);
+}
+
+.ep-btn--subtle {
+  background: var(--ep-surface-2);
+  color: var(--ep-ink-2);
+}
+
+.ep-btn--subtle:hover {
+  background: var(--ep-line);
+  color: var(--ep-ink);
+}
+
+.ep-btn--danger {
+  background: var(--ep-critical);
+  color: #2a0f0c;
+}
+
+.ep-btn--sm {
+  padding: 0.4rem 0.8rem;
+  font-size: var(--ep-text-fine);
+}
+
+.ep-btn--lg {
+  padding: 0.8rem 1.5rem;
+  font-size: var(--ep-text-body);
+}
+
+/* ---- Status pill (a link that reports live state) ----------------------------------------- */
+
+.ep-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.625rem;
+  border: 1px solid var(--ep-line-strong);
+  border-radius: var(--ep-radius-pill);
+  background: rgba(21, 24, 36, 0.72);
+  color: var(--ep-ink-2);
+  font-size: var(--ep-text-small);
+  text-decoration: none;
+  transition:
+    border-color var(--ep-duration) var(--ep-ease),
+    color var(--ep-duration) var(--ep-ease),
+    transform var(--ep-duration) var(--ep-ease);
+}
+
+.ep-pill:hover {
+  border-color: var(--ep-accent);
+  color: var(--ep-ink);
+  transform: translateY(-2px);
+}
+
+/* The dot carries state at a glance; the words next to it carry the same state for anyone who
+   cannot separate these hues. Never ship the dot on its own. */
+.ep-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ep-lime);
+  box-shadow: 0 0 0 4px rgba(166, 227, 77, 0.16);
+  animation: ep-pulse 2.6s var(--ep-ease) infinite;
+}
+
+@keyframes ep-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ep-dot {
+    animation: none;
+  }
+}
+
+/* ---- Tag ------------------------------------------------------------------------------------ */
+
+.ep-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--ep-line);
+  border-radius: var(--ep-radius-xs);
+  background: var(--ep-bg-raised);
+  font-family: var(--ep-font-mono);
+  font-size: var(--ep-text-label);
+  letter-spacing: 0.06em;
+  color: var(--ep-ink-3);
+  white-space: nowrap;
+}
+
+/* ---- Panel and card -------------------------------------------------------------------------- */
+
+.ep-panel {
+  border: 1px solid var(--ep-line);
+  border-radius: var(--ep-radius-md);
+  background: linear-gradient(170deg, var(--ep-surface), var(--ep-bg-raised));
+}
+
+.ep-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ep-line);
+  border-radius: var(--ep-radius-md);
+  background: linear-gradient(170deg, var(--ep-surface), var(--ep-bg-raised));
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--ep-duration) var(--ep-ease-out),
+    border-color var(--ep-duration) var(--ep-ease),
+    box-shadow var(--ep-duration) var(--ep-ease);
+}
+
+.ep-card--interactive:hover {
+  transform: translateY(-6px);
+  border-color: var(--ep-line-strong);
+  box-shadow: var(--ep-shadow-lg);
+}
+
+.ep-card__art {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--ep-bg-raised);
+}
+
+.ep-card__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--ep-duration-slow) var(--ep-ease-out);
+}
+
+.ep-card--interactive:hover .ep-card__art img {
+  transform: scale(1.06);
+}
+
+/* The scrim is what lets a mono label sit on top of arbitrary artwork and stay readable. */
+.ep-card__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 45%, rgba(16, 18, 25, 0.88) 100%);
+}
+
+.ep-card__art-label {
+  position: absolute;
+  left: var(--ep-space-xs);
+  bottom: var(--ep-space-2xs);
+  z-index: 2;
+  color: var(--ep-ink-2);
+}
+
+.ep-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--ep-space-sm) var(--ep-space-md) var(--ep-space-md);
+}
+
+.ep-card__title {
+  font-family: var(--ep-font-display);
+  font-size: 1.3rem;
+  font-weight: var(--ep-weight-bold);
+  letter-spacing: var(--ep-tracking-tight);
+}
+
+.ep-card__body p {
+  margin-top: var(--ep-space-2xs);
+  font-size: var(--ep-text-small);
+  line-height: var(--ep-leading-normal);
+  color: var(--ep-ink-2);
+  text-wrap: pretty;
+}
+
+.ep-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ep-space-xs);
+  margin-top: auto;
+  padding-top: var(--ep-space-sm);
+}
+
+.ep-card__go {
+  color: var(--ep-accent);
+  font-size: var(--ep-text-small);
+  font-weight: var(--ep-weight-semibold);
+  transition: transform var(--ep-duration) var(--ep-ease);
+  display: inline-block;
+}
+
+.ep-card--interactive:hover .ep-card__go {
+  transform: translateX(4px);
+}
+
+/* ---- Browser frame ----------------------------------------------------------------------------- */
+/* A flat PNG of an application reads as a picture. The same PNG inside a chrome bar reads as a
+   running program, which is the whole point of putting it on the page. */
+
+.ep-frame {
+  overflow: hidden;
+  border: 1px solid var(--ep-line-strong);
+  border-radius: 12px;
+  background: var(--ep-surface-2);
+  box-shadow: var(--ep-shadow-xl);
+}
+
+.ep-frame__bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--ep-line);
+  background: var(--ep-surface);
+}
+
+.ep-frame__bar i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3a4055;
+}
+
+.ep-frame__url {
+  flex: 1;
+  margin-left: 0.6rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 5px;
+  background: var(--ep-bg-raised);
+  font-family: var(--ep-font-mono);
+  font-size: 0.66rem;
+  color: var(--ep-ink-3);
+}
+
+.ep-frame img {
+  width: 100%;
+}
+
+/* ---- Metric ------------------------------------------------------------------------------------- */
+
+.ep-metric__value {
+  font-family: var(--ep-font-display);
+  font-weight: var(--ep-weight-black);
+  font-size: 1.9rem;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.ep-metric__value--accent {
+  color: var(--ep-accent);
+}
+
+.ep-metric__label {
+  margin-top: var(--ep-space-3xs);
+}
+
+/* ---- Status chip (RequestDesk) --------------------------------------------------------------- */
+
+.ep-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--ep-radius-pill);
+  background: var(--ep-surface-2);
+  color: var(--ep-ink-2);
+  font-size: var(--ep-text-label);
+  font-weight: var(--ep-weight-semibold);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.ep-chip::before {
+  content: "";
+  width: 0.45em;
+  height: 0.45em;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ep-chip--new {
+  background: var(--ep-status-new-bg);
+  color: var(--ep-status-new-ink);
+}
+.ep-chip--triaged {
+  background: var(--ep-status-triaged-bg);
+  color: var(--ep-status-triaged-ink);
+}
+.ep-chip--inprogress {
+  background: var(--ep-status-inprogress-bg);
+  color: var(--ep-status-inprogress-ink);
+}
+.ep-chip--blocked {
+  background: var(--ep-status-blocked-bg);
+  color: var(--ep-status-blocked-ink);
+}
+.ep-chip--resolved {
+  background: var(--ep-status-resolved-bg);
+  color: var(--ep-status-resolved-ink);
+}
+.ep-chip--closed {
+  background: var(--ep-status-closed-bg);
+  color: var(--ep-status-closed-ink);
+}
+.ep-chip--cancelled {
+  background: var(--ep-status-cancelled-bg);
+  color: var(--ep-status-cancelled-ink);
+}
+
+.ep-chip--live {
+  background: var(--ep-positive-bg);
+  color: var(--ep-positive);
+}
+
+.ep-chip--live::before {
+  animation: ep-pulse 2.6s var(--ep-ease) infinite;
+}
+
+/* ---- Priority (RequestDesk) --------------------------------------------------------------------- */
+
+.ep-priority {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-family: var(--ep-font-mono);
+  font-size: var(--ep-text-label);
+  font-weight: var(--ep-weight-medium);
+  letter-spacing: var(--ep-tracking-label);
+  text-transform: uppercase;
+  color: var(--ep-priority-normal);
+}
+
+.ep-priority--low {
+  color: var(--ep-priority-low);
+}
+.ep-priority--high {
+  color: var(--ep-priority-high);
+}
+.ep-priority--urgent {
+  color: var(--ep-priority-urgent);
+  font-weight: var(--ep-weight-bold);
+}
+
+/* ---- Form field ------------------------------------------------------------------------------------ */
+
+.ep-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ep-space-3xs);
+}
+
+.ep-field__label {
+  font-size: var(--ep-text-fine);
+  font-weight: var(--ep-weight-medium);
+  color: var(--ep-ink-2);
+}
+
+.ep-field__control {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ep-line-strong);
+  border-radius: var(--ep-radius-sm);
+  background: var(--ep-bg-raised);
+  color: var(--ep-ink);
+  font-size: var(--ep-text-small);
+  transition:
+    border-color var(--ep-duration-fast) var(--ep-ease),
+    background-color var(--ep-duration-fast) var(--ep-ease);
+}
+
+.ep-field__control::placeholder {
+  color: var(--ep-ink-3);
+}
+
+.ep-field__control:hover {
+  border-color: var(--ep-ink-3);
+}
+
+.ep-field__hint {
+  font-size: var(--ep-text-label);
+  color: var(--ep-ink-3);
+}
+
+.ep-field__error {
+  font-size: var(--ep-text-label);
+  color: var(--ep-critical);
+}
+
+.ep-field--invalid .ep-field__control {
+  border-color: var(--ep-critical);
+  background: var(--ep-critical-bg);
+}
+
+/* ---- Data table (RequestDesk) ------------------------------------------------------------------------ */
+
+.ep-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--ep-line);
+  border-radius: var(--ep-radius-md);
+  background: var(--ep-surface);
+}
+
+.ep-table {
+  min-width: 44rem;
+  font-size: var(--ep-text-small);
+}
+
+.ep-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--ep-space-2xs) var(--ep-space-sm);
+  border-bottom: 1px solid var(--ep-line);
+  background: var(--ep-surface-2);
+  font-family: var(--ep-font-mono);
+  font-size: var(--ep-text-label);
+  font-weight: var(--ep-weight-medium);
+  letter-spacing: var(--ep-tracking-label);
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--ep-ink-3);
+  white-space: nowrap;
+}
+
+.ep-table td {
+  padding: var(--ep-space-xs) var(--ep-space-sm);
+  border-bottom: 1px solid var(--ep-line);
+  vertical-align: middle;
+}
+
+.ep-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ep-table tbody tr {
+  transition: background-color var(--ep-duration-fast) var(--ep-ease);
+}
+
+.ep-table tbody tr:hover {
+  background: var(--ep-surface-2);
+}
+
+/* Reference numbers and dates only line up in a column if the digits are the same width.
+   Tabular numerals are the entire reason this class exists. */
+.ep-table__ref {
+  font-family: var(--ep-font-mono);
+  font-size: var(--ep-text-fine);
+  font-variant-numeric: tabular-nums;
+  color: var(--ep-ink-3);
+  white-space: nowrap;
+}
+
+.ep-table__title {
+  font-weight: var(--ep-weight-medium);
+  color: var(--ep-ink);
+}
+
+/* ---- Definition list ---------------------------------------------------------------------------------- */
+
+.ep-defs {
+  display: grid;
+  grid-template-columns: minmax(5rem, max-content) 1fr;
+  gap: var(--ep-space-2xs) var(--ep-space-md);
+  font-size: var(--ep-text-small);
+}
+
+.ep-defs dt {
+  font-family: var(--ep-font-mono);
+  font-size: var(--ep-text-label);
+  letter-spacing: var(--ep-tracking-label);
+  text-transform: uppercase;
+  color: var(--ep-ink-3);
+  padding-top: 0.28em;
+}
+
+.ep-defs dd {
+  margin: 0;
+  color: var(--ep-ink-2);
+}
+
+/* ---- Empty state --------------------------------------------------------------------------------------- */
+
+.ep-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ep-space-2xs);
+  padding: var(--ep-space-2xl) var(--ep-space-md);
+  text-align: center;
+  color: var(--ep-ink-3);
+}
+
+.ep-empty__title {
+  font-family: var(--ep-font-display);
+  font-size: var(--ep-text-heading);
+  color: var(--ep-ink-2);
+}

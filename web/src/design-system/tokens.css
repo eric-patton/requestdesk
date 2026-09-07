@@ -1,0 +1,168 @@
+/*
+ * VENDORED from the eric-patton.dev repository. Do not edit here.
+ *
+ * Source: https://github.com/eric-patton/eric-patton.dev  design-system/tokens.css
+ * Re-sync with: cp ../../eric-patton.dev/design-system/*.css web/src/design-system/
+ *
+ * The site and this application share one design system so the demo and the portfolio
+ * page that links to it read as a single product.
+ */
+
+/*
+ * The design tokens for eric-patton.dev and RequestDesk.
+ *
+ * One file, imported by both, so the site and the demo read as one product. Everything is
+ * prefixed --ep- so it can drop into an application that already carries its own variables
+ * (RequestDesk has Angular Material's) without colliding.
+ *
+ * The system is dark only, on purpose. A half-built light theme is worse than no light theme,
+ * and committing to one ground lets the accent, the shadows and the generated cover art all be
+ * tuned for the same background instead of compromising across two.
+ *
+ * Three type voices, each with a job:
+ *   display  Bricolage Grotesque, headlines only, where the personality lives
+ *   sans     Inter, every piece of working UI, legible at 13px in a dense table row
+ *   mono     JetBrains Mono, technical detail: counts, stack names, labels, status codes
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Type families ------------------------------------------------------------------- */
+  --ep-font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --ep-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ep-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- Type scale ---------------------------------------------------------------------- */
+  /* Fluid between a 380px phone and a 1440px desktop. The display sizes carry the page so they
+     move the most; body text barely moves, because reading size is reading size. */
+  --ep-text-display: clamp(2.9rem, 1.4rem + 6vw, 6.75rem);
+  --ep-text-title: clamp(2rem, 1.3rem + 2.8vw, 3.4rem);
+  --ep-text-heading: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
+  --ep-text-subheading: 1.15rem;
+  --ep-text-body: 1rem;
+  --ep-text-small: 0.9rem;
+  --ep-text-fine: 0.8125rem;
+  --ep-text-label: 0.6875rem;
+
+  --ep-leading-tight: 1.02;
+  --ep-leading-snug: 1.22;
+  --ep-leading-normal: 1.6;
+  --ep-leading-relaxed: 1.72;
+
+  --ep-tracking-display: -0.032em;
+  --ep-tracking-tight: -0.015em;
+  --ep-tracking-label: 0.14em;
+
+  --ep-weight-regular: 400;
+  --ep-weight-medium: 500;
+  --ep-weight-semibold: 600;
+  --ep-weight-bold: 700;
+  --ep-weight-black: 800;
+
+  /* ---- Colour: ground and surfaces ------------------------------------------------------ */
+  /* Near-black with a slight blue cast rather than pure #000, so shadows still have somewhere
+     to go and the generated cover art does not float on a void. */
+  --ep-bg: #0a0b0f;
+  --ep-bg-raised: #101219;
+  --ep-surface: #151824;
+  --ep-surface-2: #1c2030;
+
+  --ep-line: #262b3b;
+  --ep-line-strong: #343a4e;
+
+  /* ---- Colour: text --------------------------------------------------------------------- */
+  --ep-ink: #f2f3f7;
+  --ep-ink-2: #a3a9bd;
+  --ep-ink-3: #6f7689;
+
+  /* ---- Colour: accent ------------------------------------------------------------------- */
+  /* Amber rather than the default SaaS blue. It is warm against a cold ground, it survives at
+     small sizes, and it is the colour the cover art is lit with, so the page and the pictures
+     agree. --ep-on-accent is near-black because amber is far too light to carry white text. */
+  --ep-accent: #ffa94d;
+  --ep-accent-hot: #ff8a3d;
+  --ep-accent-deep: #c2410c;
+  --ep-accent-soft: rgba(255, 169, 77, 0.12);
+  --ep-on-accent: #2a1405;
+
+  /* The two supporting hues. Ice is the cool counterweight in the headline gradient and on
+     informational chips; lime means live, healthy, passing. */
+  --ep-ice: #8fb8ff;
+  --ep-lime: #a6e34d;
+
+  /* ---- Colour: feedback ----------------------------------------------------------------- */
+  --ep-positive: #a6e34d;
+  --ep-positive-bg: #1a2410;
+  --ep-caution: #ffa94d;
+  --ep-caution-bg: #2c1e10;
+  --ep-critical: #ff7a6b;
+  --ep-critical-bg: #2c1717;
+
+  /* ---- Colour: RequestDesk status palette ----------------------------------------------- */
+  /* Seven states that have to stay readable at 11px inside a dense table row. Each is a light
+     ink on a dark tint rather than a saturated fill, which holds up at small sizes and stops
+     the table turning into a bag of sweets. */
+  --ep-status-new-ink: #8fb8ff;
+  --ep-status-new-bg: #16203a;
+  --ep-status-triaged-ink: #bcaaf7;
+  --ep-status-triaged-bg: #221d3a;
+  --ep-status-inprogress-ink: #6fd3bb;
+  --ep-status-inprogress-bg: #10282a;
+  --ep-status-blocked-ink: #ffa94d;
+  --ep-status-blocked-bg: #2c1e10;
+  --ep-status-resolved-ink: #a6e34d;
+  --ep-status-resolved-bg: #1a2410;
+  --ep-status-closed-ink: #a3a9bd;
+  --ep-status-closed-bg: #1c2030;
+  --ep-status-cancelled-ink: #6f7689;
+  --ep-status-cancelled-bg: #171a24;
+
+  /* ---- Colour: RequestDesk priority ------------------------------------------------------ */
+  --ep-priority-low: #6f7689;
+  --ep-priority-normal: #a3a9bd;
+  --ep-priority-high: #ffa94d;
+  --ep-priority-urgent: #ff7a6b;
+
+  /* ---- Space ---------------------------------------------------------------------------- */
+  --ep-space-3xs: 0.25rem;
+  --ep-space-2xs: 0.5rem;
+  --ep-space-xs: 0.75rem;
+  --ep-space-sm: 1rem;
+  --ep-space-md: 1.5rem;
+  --ep-space-lg: 2rem;
+  --ep-space-xl: 3rem;
+  --ep-space-2xl: 4.5rem;
+  --ep-space-3xl: 7rem;
+  --ep-space-section: clamp(4.5rem, 2rem + 9vw, 8rem);
+
+  /* ---- Measure and layout ---------------------------------------------------------------- */
+  --ep-measure-prose: 64ch;
+  --ep-measure-narrow: 46ch;
+  --ep-page-max: 75rem;
+  --ep-page-gutter: clamp(1.25rem, 0.5rem + 3vw, 3rem);
+
+  /* ---- Radius ---------------------------------------------------------------------------- */
+  --ep-radius-xs: 4px;
+  --ep-radius-sm: 8px;
+  --ep-radius-md: 14px;
+  --ep-radius-lg: 22px;
+  --ep-radius-pill: 999px;
+
+  /* ---- Elevation -------------------------------------------------------------------------- */
+  /* On a dark ground a shadow cannot be "darker than the page", so depth comes from a real
+     black shadow plus a one-pixel lighter border. Both are needed; either alone reads flat. */
+  --ep-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --ep-shadow-md: 0 18px 40px -20px rgba(0, 0, 0, 0.9);
+  --ep-shadow-lg: 0 30px 60px -30px rgba(0, 0, 0, 0.95);
+  --ep-shadow-xl: 0 40px 80px -32px rgba(0, 0, 0, 0.92), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --ep-glow-accent: 0 8px 26px -10px rgba(255, 138, 61, 0.9);
+  --ep-focus-ring: 0 0 0 2px var(--ep-bg), 0 0 0 4px var(--ep-accent);
+
+  /* ---- Motion ----------------------------------------------------------------------------- */
+  --ep-ease: cubic-bezier(0.2, 0, 0.1, 1);
+  --ep-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ep-duration-fast: 150ms;
+  --ep-duration: 300ms;
+  --ep-duration-slow: 700ms;
+}

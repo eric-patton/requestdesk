@@ -115,8 +115,12 @@
 
   .role-email {
     margin-top: 4px;
-    font: var(--mat-sys-label-small);
-    color: var(--mat-sys-outline);
+    // --mat-sys-outline is a border colour. It passed for muted text on the old light theme and
+    // is unreadable on a dark one, and this is the line that tells a visitor which account they
+    // are about to sign in as.
+    font-family: var(--ep-font-mono);
+    font-size: var(--ep-text-label);
+    color: var(--ep-ink-2);
   }
 }
 

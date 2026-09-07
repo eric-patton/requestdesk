@@ -109,7 +109,12 @@ export class Dashboard implements OnInit {
     (this.report()?.openByPriority ?? []).map((p) => ({
       label: p.priority,
       value: p.count,
-      color: { Low: '#94a3b8', Normal: '#0ea5e9', High: '#f97316', Urgent: '#dc2626' }[p.priority],
+      color: {
+        Low: 'var(--ep-priority-low)',
+        Normal: 'var(--ep-ice)',
+        High: 'var(--ep-accent)',
+        Urgent: 'var(--ep-critical)',
+      }[p.priority],
     })),
   );
 
@@ -117,7 +122,15 @@ export class Dashboard implements OnInit {
     (this.report()?.aging ?? []).map((bucket, index) => ({
       label: bucket.label,
       value: bucket.count,
-      color: ['#10b981', '#84cc16', '#f59e0b', '#f97316', '#dc2626'][index] ?? '#64748b',
+      // Youngest to oldest, so the ramp itself says how bad the bucket is.
+      color:
+        [
+          'var(--ep-lime)',
+          'var(--ep-status-inprogress-ink)',
+          'var(--ep-accent)',
+          'var(--ep-accent-hot)',
+          'var(--ep-critical)',
+        ][index] ?? 'var(--ep-ink-3)',
     })),
   );
 
