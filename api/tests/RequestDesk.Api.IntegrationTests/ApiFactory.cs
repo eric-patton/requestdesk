@@ -69,7 +69,13 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Demo:Password", DemoPassword);
         builder.UseSetting("Storage:Root", _storageRoot);
         builder.UseSetting("RateLimiting:AuthPermitPerMinute", "100000");
+
+        // Quiet by default. The append-only tests make the database refuse statements on purpose,
+        // and the test server has no body-size feature; neither is news worth a line in the test log.
         builder.UseSetting("Logging:LogLevel:Default", "Warning");
+        builder.UseSetting("Logging:LogLevel:Microsoft.AspNetCore", "Error");
+        builder.UseSetting("Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Critical");
+        builder.UseSetting("Logging:LogLevel:RequestDesk", "Error");
     }
 
     /// <summary>A fresh scope for tests that need to look at the database directly.</summary>

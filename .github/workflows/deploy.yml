@@ -42,8 +42,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}-api:latest
             ghcr.io/${{ github.repository }}-api:${{ github.sha }}
-          cache-from: type=gha,scope=api
-          cache-to: type=gha,scope=api,mode=max
 
       - name: Build and push the web image
         uses: docker/build-push-action@v6
@@ -54,8 +52,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}-web:latest
             ghcr.io/${{ github.repository }}-web:${{ github.sha }}
-          cache-from: type=gha,scope=web
-          cache-to: type=gha,scope=web,mode=max
 
   fly:
     name: Deploy to Fly.io
