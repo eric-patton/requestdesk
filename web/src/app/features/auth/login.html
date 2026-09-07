@@ -1,0 +1,102 @@
+<div class="login-page">
+  <section class="panel card" aria-labelledby="login-title">
+    <header class="hero">
+      <mat-icon class="logo" aria-hidden="true">support_agent</mat-icon>
+      <h1 id="login-title">RequestDesk</h1>
+      <p class="tagline">
+        Customers submit service requests. Agents work them. An admin watches the queue.
+      </p>
+    </header>
+
+    @if (busy()) {
+      <mat-progress-bar mode="indeterminate" aria-label="Signing in" />
+    }
+
+    @if (error(); as message) {
+      <p class="error" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon>
+        {{ message }}
+      </p>
+    }
+
+    @if (demo.info(); as info) {
+      <p class="lead">Pick a role to sign in as. No password to type.</p>
+
+      <div class="roles">
+        @for (account of info.accounts; track account.email) {
+          <button
+            type="button"
+            class="role card"
+            (click)="signInAs(account)"
+            [disabled]="busy() !== null"
+            [attr.aria-busy]="busy() === account.role"
+          >
+            <mat-icon aria-hidden="true">{{ icon[account.role] }}</mat-icon>
+            <span class="role-name">Continue as {{ account.role }}</span>
+            <span class="role-blurb">{{ blurb[account.role] }}</span>
+            <span class="role-email">{{ account.email }}</span>
+          </button>
+        }
+      </div>
+
+      <p class="reset-note">
+        <mat-icon aria-hidden="true">history</mat-icon>
+        <span>
+          Demo data resets every {{ info.resetIntervalMinutes }} minutes{{
+            info.nextResetAt ? ' (next at ' + (info.nextResetAt | date: 'shortTime') + ')' : ''
+          }}. Everything in it is synthetic. The password for every account is
+          <code>{{ info.accounts[0].password }}</code>
+        </span>
+      </p>
+
+      <button
+        type="button"
+        mat-button
+        class="toggle-form"
+        (click)="showForm.set(!showForm())"
+        [attr.aria-expanded]="showForm()"
+      >
+        {{ showForm() ? 'Hide' : 'Or sign in with an email and password' }}
+      </button>
+    } @else if (demo.loaded()) {
+      <p class="lead">Sign in to continue.</p>
+    }
+
+    @if (showForm() || (demo.loaded() && !demo.info())) {
+      <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="username" />
+          @if (form.controls.email.hasError('required')) {
+            <mat-error>Email is required.</mat-error>
+          } @else if (form.controls.email.hasError('email')) {
+            <mat-error>That does not look like an email address.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+          @if (form.controls.password.hasError('required')) {
+            <mat-error>Password is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <button mat-flat-button type="submit" [disabled]="busy() !== null">Sign in</button>
+      </form>
+    }
+  </section>
+
+  <footer class="footer">
+    <a href="/scalar" target="_blank" rel="noopener">API reference</a>
+    <span aria-hidden="true">·</span>
+    <a href="/health" target="_blank" rel="noopener">Health</a>
+    <span aria-hidden="true">·</span>
+    <a href="https://github.com/eric-patton/requestdesk" target="_blank" rel="noopener">Source</a>
+  </footer>
+</div>

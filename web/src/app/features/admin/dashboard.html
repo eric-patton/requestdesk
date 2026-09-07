@@ -1,0 +1,73 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">
+        The state of the queue.
+        @if (report(); as r) {
+          Computed {{ r.generatedAt | date: 'mediumTime' }}.
+        }
+      </p>
+    </div>
+    <button mat-stroked-button type="button" (click)="load()" [disabled]="loading()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      Refresh
+    </button>
+  </header>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" aria-label="Loading dashboard" />
+  }
+
+  @if (error(); as message) {
+    <app-empty-state icon="error" headline="Could not load the dashboard" [detail]="message">
+      <button mat-stroked-button type="button" (click)="load()">Try again</button>
+    </app-empty-state>
+  }
+
+  @if (report()) {
+    <section class="tiles" aria-label="Headline numbers">
+      @for (tile of tiles(); track tile.label) {
+        <article class="tile card">
+          <mat-icon aria-hidden="true">{{ tile.icon }}</mat-icon>
+          <p class="value">{{ tile.value }}</p>
+          <h2 class="label">{{ tile.label }}</h2>
+          <p class="hint">{{ tile.hint }}</p>
+        </article>
+      }
+    </section>
+
+    <div class="charts">
+      <section class="card chart" aria-labelledby="status-chart">
+        <h2 id="status-chart">Requests by status</h2>
+        <p class="hint">Every request ever opened, by where it is now.</p>
+        <app-bar-chart [bars]="byStatus()" ariaLabel="Requests by status" />
+      </section>
+
+      <section class="card chart" aria-labelledby="aging-chart">
+        <h2 id="aging-chart">Age of open requests</h2>
+        <p class="hint">How long the open ones have been waiting since they were opened.</p>
+        <app-bar-chart [bars]="aging()" ariaLabel="Age of open requests" />
+      </section>
+
+      <section class="card chart" aria-labelledby="priority-chart">
+        <h2 id="priority-chart">Open requests by priority</h2>
+        <p class="hint">Where the urgent work is.</p>
+        <app-bar-chart [bars]="byPriority()" ariaLabel="Open requests by priority" />
+      </section>
+
+      <section class="card chart how" aria-labelledby="how-heading">
+        <h2 id="how-heading">How this is computed</h2>
+        <p class="hint">
+          One SQL statement with filtered aggregates, a percentile for the median age, and bucketed
+          aging. It is the one query in the system written by hand rather than through the ORM, and
+          the README says why.
+        </p>
+        <a mat-button routerLink="/requests">
+          <mat-icon aria-hidden="true">list_alt</mat-icon>
+          Go to the queue
+        </a>
+      </section>
+    </div>
+  }
+</div>

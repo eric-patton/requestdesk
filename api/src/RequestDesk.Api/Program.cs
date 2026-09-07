@@ -38,7 +38,14 @@ builder.Services
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options => options.AddDocumentTransformer((document, _, _) =>
+{
+    document.Info.Title = "RequestDesk API";
+    document.Info.Description =
+        "A service request tracker. Customers open requests, agents work them, admins watch the queue. "
+        + "Sign in at /api/auth/login and send the access token as a bearer token.";
+    return Task.CompletedTask;
+}));
 
 // Authentication: JWT bearer, validated against the same key the authenticator signs with.
 var jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();

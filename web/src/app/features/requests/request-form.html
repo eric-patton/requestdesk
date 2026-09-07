@@ -1,0 +1,145 @@
+<div class="page narrow">
+  <a mat-button routerLink="/requests" class="back">
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    All requests
+  </a>
+
+  <header class="page-header">
+    <div>
+      <h1>New request</h1>
+      <p class="subtitle">
+        @if (auth.isStaff()) {
+          Open a request on a customer's behalf. They will see it on their account.
+        } @else {
+          Tell us what needs doing. An agent will pick it up and you can follow it here.
+        }
+      </p>
+    </div>
+  </header>
+
+  <form
+    class="card form"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    novalidate
+    [attr.aria-busy]="saving()"
+  >
+    @if (saving()) {
+      <mat-progress-bar mode="indeterminate" aria-label="Saving" />
+    }
+
+    <!-- Announced when it appears, and each item focuses its field. -->
+    <div class="summary-slot" role="alert" aria-live="assertive">
+      @if (submitted() && errorSummary().length > 0) {
+        <div class="error-summary">
+          <p class="error-title">
+            <mat-icon aria-hidden="true">error</mat-icon>
+            Fix
+            {{
+              errorSummary().length === 1 ? 'this' : 'these ' + errorSummary().length + ' things'
+            }}
+            before submitting
+          </p>
+          <ul>
+            @for (item of errorSummary(); track item.control) {
+              <li>
+                <button type="button" class="link" (click)="focus(item.control)">
+                  {{ item.label }}: {{ item.message }}
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+      @if (serverError(); as message) {
+        <div class="error-summary">
+          <p class="error-title">
+            <mat-icon aria-hidden="true">error</mat-icon>
+            {{ message }}
+          </p>
+        </div>
+      }
+    </div>
+
+    @if (auth.isStaff()) {
+      <mat-form-field appearance="outline">
+        <mat-label>Customer</mat-label>
+        <mat-select formControlName="customerId" id="field-customerId" required>
+          <mat-select-trigger>{{
+            customerName(form.controls.customerId.value)
+          }}</mat-select-trigger>
+          @for (customer of customers(); track customer.id) {
+            <mat-option [value]="customer.id">
+              {{ customer.name }}
+              @if (customer.organization) {
+                <span class="option-hint">{{ customer.organization }}</span>
+              }
+            </mat-option>
+          }
+        </mat-select>
+        <mat-hint>Who is this request for?</mat-hint>
+        @if (form.controls.customerId.hasError('required')) {
+          <mat-error>Choose the customer this request is for.</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Title</mat-label>
+      <input
+        matInput
+        formControlName="title"
+        id="field-title"
+        required
+        [maxlength]="limits.title"
+        placeholder="One line that says what is wrong"
+        autocomplete="off"
+      />
+      <mat-hint align="end">{{ form.controls.title.value.length }} / {{ limits.title }}</mat-hint>
+      @if (form.controls.title.invalid) {
+        <mat-error>{{ titleError() }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        id="field-description"
+        required
+        rows="6"
+        [maxlength]="limits.description"
+        placeholder="What is happening, where, since when, and what you have already tried"
+      ></textarea>
+      <mat-hint align="end"
+        >{{ form.controls.description.value.length }} / {{ limits.description }}</mat-hint
+      >
+      @if (form.controls.description.invalid) {
+        <mat-error>{{ descriptionError() }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Priority</mat-label>
+      <mat-select formControlName="priority" id="field-priority" required>
+        <mat-select-trigger>{{ form.controls.priority.value }}</mat-select-trigger>
+        @for (priority of priorities; track priority) {
+          <mat-option [value]="priority">
+            {{ priority }}
+            <span class="option-hint">{{ priorityHelp[priority] }}</span>
+          </mat-option>
+        }
+      </mat-select>
+      <mat-hint>{{ priorityHelp[form.controls.priority.value] }}</mat-hint>
+    </mat-form-field>
+
+    <div class="actions">
+      <a mat-button routerLink="/requests" type="button">Cancel</a>
+      <button mat-flat-button type="submit" [disabled]="saving()">
+        <mat-icon aria-hidden="true">send</mat-icon>
+        Open request
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,263 @@
+<div class="page">
+  <a mat-button routerLink="/requests" class="back">
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    All requests
+  </a>
+
+  @if (loading() && !request()) {
+    <mat-progress-bar mode="indeterminate" aria-label="Loading request" />
+  }
+
+  @if (error(); as message) {
+    <app-empty-state icon="error" headline="Could not load this request" [detail]="message">
+      <a mat-stroked-button routerLink="/requests">Back to the list</a>
+    </app-empty-state>
+  }
+
+  @if (request(); as r) {
+    <header class="page-header detail-header">
+      <div class="heading">
+        <p class="ref">
+          {{ r.referenceNumber }}
+          <span aria-hidden="true">·</span>
+          {{ r.customer.name }}
+          @if (r.customer.organization) {
+            <span class="org">({{ r.customer.organization }})</span>
+          }
+        </p>
+        <h1>{{ r.title }}</h1>
+        <div class="badges">
+          <app-status-chip [status]="r.status" />
+          <app-priority-badge [priority]="r.priority" />
+          <span class="meta">
+            Opened by {{ r.createdBy.displayName }}
+            <time [attr.datetime]="r.createdAt" [title]="r.createdAt | date: 'medium'">{{
+              r.createdAt | timeAgo
+            }}</time>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    @if (busy()) {
+      <mat-progress-bar mode="indeterminate" class="busy" aria-label="Saving" />
+    }
+
+    <div class="layout">
+      <div class="main">
+        <section class="card block" aria-labelledby="description-heading">
+          <h2 id="description-heading">Description</h2>
+          <p class="description">{{ r.description }}</p>
+        </section>
+
+        <section class="card block" aria-labelledby="timeline-heading">
+          <h2 id="timeline-heading">Timeline</h2>
+          <p class="hint">
+            Status changes and comments in one thread. Status rows are never edited or deleted, so
+            this is the record.
+          </p>
+
+          <ol class="timeline">
+            @for (item of timeline(); track trackTimeline($index, item)) {
+              @if (item.kind === 'status') {
+                <li class="event status-event">
+                  <span
+                    class="marker status-{{ statusClass[item.entry.toStatus] }}"
+                    aria-hidden="true"
+                  >
+                    <mat-icon>{{ item.entry.fromStatus ? 'swap_horiz' : 'add_circle' }}</mat-icon>
+                  </span>
+                  <div class="body">
+                    <p class="line">
+                      <strong>{{ item.entry.actor.displayName }}</strong>
+                      @if (item.entry.fromStatus) {
+                        moved this from <app-status-chip [status]="item.entry.fromStatus" /> to
+                        <app-status-chip [status]="item.entry.toStatus" />
+                      } @else {
+                        opened this request
+                      }
+                    </p>
+                    @if (item.entry.reason && item.entry.fromStatus) {
+                      <blockquote class="reason">{{ item.entry.reason }}</blockquote>
+                    }
+                    <time [attr.datetime]="item.at" [title]="item.at | date: 'medium'">{{
+                      item.at | timeAgo
+                    }}</time>
+                  </div>
+                </li>
+              } @else {
+                <li class="event comment-event">
+                  <span class="marker comment" aria-hidden="true"
+                    ><mat-icon>chat_bubble</mat-icon></span
+                  >
+                  <div class="body">
+                    <p class="line">
+                      <strong>{{ item.comment.author.displayName }}</strong>
+                      <span class="role">{{ item.comment.author.role }}</span>
+                    </p>
+                    <p class="comment-body">{{ item.comment.body }}</p>
+                    <time [attr.datetime]="item.at" [title]="item.at | date: 'medium'">{{
+                      item.at | timeAgo
+                    }}</time>
+                  </div>
+                </li>
+              }
+            }
+          </ol>
+
+          @if (r.permissions.canComment) {
+            <form class="composer" (submit)="$event.preventDefault(); submitComment()" novalidate>
+              <mat-form-field appearance="outline" class="composer-field" subscriptSizing="dynamic">
+                <mat-label>Add a comment</mat-label>
+                <textarea
+                  matInput
+                  [formControl]="comment"
+                  rows="3"
+                  [maxlength]="maxComment"
+                  placeholder="Visible to everyone who can see this request"
+                ></textarea>
+                <mat-hint align="end">{{ comment.value.length }} / {{ maxComment }}</mat-hint>
+                @if (comment.touched && comment.hasError('required')) {
+                  <mat-error>Write something first.</mat-error>
+                }
+              </mat-form-field>
+              <button mat-flat-button type="submit" [disabled]="busy() !== null">
+                <mat-icon aria-hidden="true">send</mat-icon>
+                Comment
+              </button>
+            </form>
+          }
+        </section>
+      </div>
+
+      <aside class="side">
+        <section class="card block" aria-labelledby="status-heading">
+          <h2 id="status-heading">Status</h2>
+          <div class="current">
+            <app-status-chip [status]="r.status" />
+          </div>
+
+          @if (transitions().length > 0) {
+            <p class="hint">
+              The API lists the moves you are allowed to make from here. Nothing else is offered.
+            </p>
+            <div class="transitions">
+              @for (t of transitions(); track t.to) {
+                <button
+                  type="button"
+                  [class.destructive]="t.destructive"
+                  mat-stroked-button
+                  (click)="changeStatus(t.to)"
+                  [disabled]="busy() !== null"
+                >
+                  <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
+                  {{ t.verb }}
+                </button>
+              }
+            </div>
+          } @else if (isTerminal()) {
+            <p class="hint">
+              This request is {{ statusLabel[r.status] | lowercase }}. It cannot move again.
+            </p>
+          } @else {
+            <p class="hint">No moves available to you from this status.</p>
+          }
+        </section>
+
+        <section class="card block" aria-labelledby="assignment-heading">
+          <h2 id="assignment-heading">Assignment</h2>
+          @if (r.permissions.canChangeAssignment) {
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full">
+              <mat-label>Assigned agent</mat-label>
+              <mat-select
+                [value]="r.assignedAgent?.id ?? null"
+                (selectionChange)="assign($event.value)"
+                [disabled]="busy() !== null"
+              >
+                <mat-select-trigger>{{
+                  r.assignedAgent?.displayName ?? 'Unassigned'
+                }}</mat-select-trigger>
+                @if (auth.isAdmin()) {
+                  <mat-option [value]="null"><em>Unassigned</em></mat-option>
+                }
+                @for (person of staff(); track person.id) {
+                  <mat-option [value]="person.id">
+                    {{ person.displayName }}
+                    <span class="option-role">{{ person.role }}</span>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            @if (!auth.isAdmin()) {
+              <p class="hint">Agents can claim unassigned work. Reassigning is an admin action.</p>
+            }
+          } @else {
+            <p class="assignee">
+              <mat-icon aria-hidden="true">{{
+                r.assignedAgent ? 'person' : 'person_off'
+              }}</mat-icon>
+              {{ r.assignedAgent?.displayName ?? 'Unassigned' }}
+            </p>
+          }
+        </section>
+
+        <section class="card block" aria-labelledby="attachments-heading">
+          <h2 id="attachments-heading">Attachments</h2>
+          @if (r.attachments.length === 0) {
+            <p class="hint">Nothing attached yet.</p>
+          } @else {
+            <ul class="attachments">
+              @for (file of r.attachments; track file.id) {
+                <li>
+                  <button
+                    type="button"
+                    class="file"
+                    (click)="download(file)"
+                    [attr.aria-label]="'Download ' + file.fileName"
+                  >
+                    <mat-icon aria-hidden="true">attach_file</mat-icon>
+                    <span class="file-name">{{ file.fileName }}</span>
+                    <span class="file-meta"
+                      >{{ formatSize(file.sizeBytes) }} · {{ file.uploadedBy.displayName }}</span
+                    >
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+          @if (r.permissions.canAttach) {
+            <label class="upload">
+              <input
+                type="file"
+                [accept]="allowedTypes"
+                (change)="onFileChosen($event)"
+                [disabled]="busy() !== null"
+              />
+              <span mat-stroked-button class="upload-button">
+                <mat-icon aria-hidden="true">upload_file</mat-icon>
+                Attach a file
+              </span>
+              <span class="hint">Images, PDF, text or CSV, up to {{ maxFileSize }}.</span>
+            </label>
+          }
+        </section>
+
+        <section class="card block meta-block" aria-labelledby="details-heading">
+          <h2 id="details-heading">Details</h2>
+          <dl>
+            <dt>Reference</dt>
+            <dd>{{ r.referenceNumber }}</dd>
+            <dt>Customer</dt>
+            <dd>{{ r.customer.name }}</dd>
+            <dt>Priority</dt>
+            <dd><app-priority-badge [priority]="r.priority" /></dd>
+            <dt>Opened</dt>
+            <dd>{{ r.createdAt | date: 'medium' }}</dd>
+            <dt>Last updated</dt>
+            <dd>{{ r.updatedAt | date: 'medium' }}</dd>
+          </dl>
+        </section>
+      </aside>
+    </div>
+  }
+</div>

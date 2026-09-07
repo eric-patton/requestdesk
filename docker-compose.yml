@@ -1,0 +1,61 @@
+# One command, working stack, seeded data:
+#
+#   docker compose up --build
+#
+# Then open http://localhost:8085 and pick a role. The API is also reachable directly on
+# http://localhost:5028 (Scalar API reference at /scalar). PostgreSQL is on localhost:5440 with the
+# same credentials the API's appsettings.Development.json expects, so `dotnet run` against this
+# database works too.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: requestdesk
+      POSTGRES_USER: requestdesk
+      POSTGRES_PASSWORD: requestdesk
+    ports:
+      - "5440:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U requestdesk -d requestdesk"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: Host=postgres;Port=5432;Database=requestdesk;Username=requestdesk;Password=requestdesk
+      # Compose only. Anything real gets its key from a secret store, never a file in the repository.
+      Jwt__SigningKey: compose-only-signing-key-not-for-production-0123456789abcdef
+      Demo__Enabled: "true"
+      Demo__ResetIntervalMinutes: "60"
+      Cors__Origins__0: http://localhost:8085
+      Cors__Origins__1: http://localhost:4200
+    ports:
+      - "5028:8080"
+    volumes:
+      - attachments:/app/var/attachments
+
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    depends_on:
+      - api
+    environment:
+      API_UPSTREAM: http://api:8080
+    ports:
+      - "8085:80"
+
+volumes:
+  pgdata:
+  attachments:

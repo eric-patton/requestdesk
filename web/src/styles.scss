@@ -1,1 +1,139 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+
+  // Request status colours. One source for the chips, the table and the dashboard bars.
+  --status-new-dot: #2563eb;
+  --status-new-bg: #dbeafe;
+  --status-new-fg: #1e3a8a;
+  --status-triaged-dot: #7c3aed;
+  --status-triaged-bg: #ede9fe;
+  --status-triaged-fg: #4c1d95;
+  --status-in-progress-dot: #d97706;
+  --status-in-progress-bg: #fef3c7;
+  --status-in-progress-fg: #78350f;
+  --status-blocked-dot: #dc2626;
+  --status-blocked-bg: #fee2e2;
+  --status-blocked-fg: #7f1d1d;
+  --status-resolved-dot: #059669;
+  --status-resolved-bg: #d1fae5;
+  --status-resolved-fg: #064e3b;
+  --status-closed-dot: #64748b;
+  --status-closed-bg: #e2e8f0;
+  --status-closed-fg: #1e293b;
+  --status-cancelled-dot: #9ca3af;
+  --status-cancelled-bg: #f3f4f6;
+  --status-cancelled-fg: #4b5563;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--mat-sys-primary);
+}
+
+// Status chip palette: each status maps the generic variables the chip reads to its own colours.
+@each $s in new, triaged, in-progress, blocked, resolved, closed, cancelled {
+  .status-#{$s} {
+    --status-dot: var(--status-#{$s}-dot);
+    --status-bg: var(--status-#{$s}-bg);
+    --status-fg: var(--status-#{$s}-fg);
+    --status-border: color-mix(in srgb, var(--status-#{$s}-dot) 30%, transparent);
+  }
+}
+
+.priority-low {
+  --priority-bg: #f1f5f9;
+  --priority-fg: #475569;
+}
+.priority-normal {
+  --priority-bg: #e0f2fe;
+  --priority-fg: #075985;
+}
+.priority-high {
+  --priority-bg: #ffedd5;
+  --priority-fg: #9a3412;
+}
+.priority-urgent {
+  --priority-bg: #fee2e2;
+  --priority-fg: #991b1b;
+}
+
+// Page scaffolding shared by every screen.
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-headline-medium);
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    margin: 4px 0 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.card {
+  background: var(--mat-sys-surface-container-lowest);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// Focus is visible everywhere. The table rows rely on it.
+:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}

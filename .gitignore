@@ -38,3 +38,6 @@ Thumbs.db
 # Local secrets. Never commit these.
 .env
 .env.*
+
+# Screenshot source video; the GIF is what the README uses and the spec regenerates both.
+docs/screenshots/demo.webm
