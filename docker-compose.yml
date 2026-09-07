@@ -10,10 +10,11 @@
 services:
   postgres:
     image: postgres:17-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: requestdesk
       POSTGRES_USER: requestdesk
-      POSTGRES_PASSWORD: requestdesk
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-requestdesk}
     ports:
       - "5440:5432"
     volumes:
@@ -28,14 +29,16 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__Default: Host=postgres;Port=5432;Database=requestdesk;Username=requestdesk;Password=requestdesk
-      # Compose only. Anything real gets its key from a secret store, never a file in the repository.
-      Jwt__SigningKey: compose-only-signing-key-not-for-production-0123456789abcdef
+      ConnectionStrings__Default: Host=postgres;Port=5432;Database=requestdesk;Username=requestdesk;Password=${POSTGRES_PASSWORD:-requestdesk}
+      # The defaults are for a laptop. A real host puts POSTGRES_PASSWORD and JWT_SIGNING_KEY in a
+      # .env file next to this compose file (gitignored) and the defaults are never used.
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-compose-only-signing-key-not-for-production-0123456789abcdef}
       Demo__Enabled: "true"
       Demo__ResetIntervalMinutes: "60"
       Cors__Origins__0: http://localhost:8085
@@ -49,6 +52,7 @@ services:
     build:
       context: .
       dockerfile: web/Dockerfile
+    restart: unless-stopped
     depends_on:
       - api
     environment:

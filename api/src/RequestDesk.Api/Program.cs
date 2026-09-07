@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -100,6 +101,18 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = AttachmentRules.MaxSizeBytes + (1024 * 1024));
 
+// The API always sits behind a reverse proxy (nginx in compose, Fly and ECS alike) that sets
+// X-Forwarded-For to the real client. Without this the rate limiter would see one address, the
+// proxy's, for every visitor. The API port is never published on a public interface, so trusting
+// the immediate proxy is the right call here.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 // /health checks the database for real. /health/live only says the process is up.
 builder.Services
     .AddHealthChecks()
@@ -110,6 +123,7 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 

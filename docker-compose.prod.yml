@@ -1,0 +1,32 @@
+# Overrides for a real host such as the Mac Mini behind a Cloudflare Tunnel:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Only the front end is reachable, on localhost:8085, which is where the tunnel points. The API and
+# PostgreSQL ports are not published at all; the tunnel is the only way in. Secrets come from a .env
+# file next to the compose files (see docs/hosting-mac-mini.md), which git ignores.
+
+services:
+  postgres:
+    ports: !reset []
+
+  api:
+    ports: !reset []
+    environment:
+      Demo__Enabled: "true"
+      Demo__ResetIntervalMinutes: "60"
+      Cors__Origins: !reset null
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  web:
+    ports:
+      - "127.0.0.1:8085:80"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,6 +1,13 @@
 # Serves the Angular build and proxies the API on the same origin, so the browser never deals with
 # CORS and the app never needs to know where the API lives.
 
+# The real client address: Cloudflare's header when the request came through the tunnel, the
+# TCP peer otherwise. The API uses it for per-address rate limiting on sign-in.
+map $http_cf_connecting_ip $client_ip {
+    default $remote_addr;
+    ~.      $http_cf_connecting_ip;
+}
+
 server {
     listen 80;
     listen [::]:80;
@@ -31,8 +38,8 @@ server {
         proxy_pass $api_upstream;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $client_ip;
+        proxy_set_header X-Forwarded-For $client_ip;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_read_timeout 60s;
         client_max_body_size 12m;
