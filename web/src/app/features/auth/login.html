@@ -1,4 +1,15 @@
 <div class="login-page">
+  <button
+    mat-icon-button
+    class="theme-toggle"
+    type="button"
+    (click)="theme.cycle()"
+    [attr.aria-label]="theme.label()"
+    [matTooltip]="theme.label()"
+  >
+    <mat-icon aria-hidden="true">{{ theme.icon() }}</mat-icon>
+  </button>
+
   <section class="panel card" aria-labelledby="login-title">
     <header class="hero">
       <mat-icon class="logo" aria-hidden="true">support_agent</mat-icon>

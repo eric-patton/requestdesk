@@ -1,4 +1,6 @@
 .login-page {
+  // Anchors the absolutely positioned theme control below.
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -177,4 +179,14 @@
   gap: 12px;
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-body-small);
+}
+
+// The sign-in screen has no toolbar, so the theme control sits in the corner of the page. It is
+// the first screen anyone reviewing this application sees, and being unable to switch there would
+// make the theme system look like it only covers the parts behind a login.
+.theme-toggle {
+  position: absolute;
+  top: var(--ep-space-sm);
+  right: var(--ep-space-sm);
+  color: var(--ep-ink-2);
 }

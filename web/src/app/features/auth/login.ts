@@ -6,11 +6,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { DemoService } from '../../core/demo.service';
 import { DemoAccount, UserRole } from '../../core/models';
 import { describeError } from '../../core/problem-details';
+import { ThemeService } from '../../core/theme.service';
 
 /**
  * Sign in. In demo mode this is three buttons: nobody evaluating the app should have to type a
@@ -27,6 +29,7 @@ import { describeError } from '../../core/problem-details';
     MatFormFieldModule,
     MatInputModule,
     MatProgressBarModule,
+    MatTooltipModule,
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
@@ -37,6 +40,7 @@ export class Login {
   private readonly fb = inject(FormBuilder);
 
   protected readonly demo = inject(DemoService);
+  protected readonly theme = inject(ThemeService);
   protected readonly busy = signal<string | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly showForm = signal(false);
